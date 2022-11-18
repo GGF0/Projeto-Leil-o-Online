@@ -1,0 +1,114 @@
+package leilão2022;
+
+import java.util.Scanner;
+
+import java.util.concurrent.*;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+
+public class MainLeilão {
+
+//Métodos    
+    
+    //Contagem regressiva
+    
+public static void contagem(){
+  ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+ Runnable runnable = new Runnable() {
+            int countdownStarter = 1;
+
+            public void run() {
+
+                System.out.println(countdownStarter);
+                countdownStarter++;
+                if (countdownStarter > 10) {
+                    scheduler.shutdown();
+                }
+            }
+        };
+        scheduler.scheduleAtFixedRate(runnable, 0, 1, SECONDS);  
+        
+}
+
+    //Definir vencedor
+
+public static boolean defineVencedor(String cn,float ul){
+boolean dv;    
+    if(cn.equalsIgnoreCase("s")&& ul > 0){
+    dv = true;
+} else if(cn.equalsIgnoreCase("n")){
+ dv = false;   
+} else{
+  dv = false;  
+}
+    return dv;
+}
+
+//Método principal
+
+    public static void main(String[] args) {
+        //Variáveis e objetos principais
+        Scanner tec = new Scanner(System.in);
+        boolean venda = false;
+        
+        //Geração da sala
+
+System.out.print("Insira o código do lote: \n");
+ String codlot = tec.next();
+System.out.print("Insira o valor inicial do lote: \n");
+float vilot = tec.nextFloat();
+System.out.print("Insira a quantidade de compradores: \n"); 
+int qc = tec.nextInt();
+
+float[] lc = new float[qc];
+String[] comprador = new String[qc];
+
+for(int i = 0;i < comprador.length;i++){
+System.out.println("Digite o nome do comprador N"+(i+1));
+comprador[i] = tec.next();
+}
+
+       //Leilão
+float ul = 00;
+int nc = 0;
+
+do{
+    for(int i = 0;i < lc.length;i++){
+    System.out.println("==============LEILÃO ONLINE (PROTÓTIPO)===============");
+System.out.println("Código: "+codlot);
+System.out.println("Valor mínimo: "+vilot);
+System.out.println("=======================================================");
+
+System.out.println("Último lance: R$"+ul);
+System.out.print("Comprador "+comprador[i]+" faça sua jogada: R$");  
+lc[i] = tec.nextFloat();
+float lance = lc[i];
+if(lance > vilot && lance > ul){
+ul = lance;    
+} else{
+System.out.println("Lance inválido!");
+}
+  
+System.out.print("\nIniciar contagem regressiva [S/N]? ");
+String contn = tec.next();
+
+//Contagem regressiva
+if (ul > 0 && contn.equalsIgnoreCase("s")){       
+ contagem();
+}else{
+System.out.println("Contagem negada");
+}
+
+System.out.println("=======================================================");
+venda = defineVencedor(contn,ul);
+if(venda == true){
+    nc = i;
+System.out.println("VENDIDO!");
+System.out.println("O ganhador foi o comprador "+comprador[nc]);
+    break;
+}
+    }
+}while(venda != true);   
+    }  
+}
